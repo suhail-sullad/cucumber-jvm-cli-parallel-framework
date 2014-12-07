@@ -19,7 +19,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 
 public class DriverManager extends EventFiringWebDriver {
-	public static int invocationcount=0;
+	public static int invocationcount = 0;
+
 	public DriverManager() {
 		super(getdriver());
 	}
@@ -30,7 +31,11 @@ public class DriverManager extends EventFiringWebDriver {
 		invocationcount++;
 		try {
 			DesiredCapabilities capabilities = null;
-			FileInputStream input = new FileInputStream("browser.properties");
+			// To use cucumber-eclipse plugin set the user directory path to
+			// your project folder
+			
+			FileInputStream input = new FileInputStream(new File(
+					"./browser.properties").getAbsolutePath());
 			prop.load(input);
 
 			switch (prop.getProperty("browsername")) {
@@ -38,8 +43,9 @@ public class DriverManager extends EventFiringWebDriver {
 				ChromeDriverService cds = new ChromeDriverService.Builder()
 						.usingDriverExecutable(
 								new File(prop
-										.getProperty("chromebrowserdriverpath")))
-						.usingAnyFreePort().build();
+										.getProperty("chromebrowserdriverpath"))
+										.getAbsoluteFile()).usingAnyFreePort()
+						.build();
 
 				return new ChromeDriver(cds);
 
@@ -50,8 +56,9 @@ public class DriverManager extends EventFiringWebDriver {
 				InternetExplorerDriverService ids = new InternetExplorerDriverService.Builder()
 						.usingDriverExecutable(
 								new File(prop
-										.getProperty("iebrowserdriverpath")))
-						.usingAnyFreePort().build();
+										.getProperty("iebrowserdriverpath"))
+										.getAbsoluteFile()).usingAnyFreePort()
+						.build();
 				return new InternetExplorerDriver(ids);
 
 			case "htmlunit":
@@ -60,8 +67,9 @@ public class DriverManager extends EventFiringWebDriver {
 			case "phantomjs":
 				PhantomJSDriverService pds = new PhantomJSDriverService.Builder()
 						.usingPhantomJSExecutable(
-								new File(prop.getProperty("phantomdriverpath")))
-						.usingAnyFreePort().build();
+								new File(prop.getProperty("phantomdriverpath"))
+										.getAbsoluteFile()).usingAnyFreePort()
+						.build();
 				return new PhantomJSDriver(pds, DesiredCapabilities.firefox());
 
 			case "remotechrome":
@@ -104,6 +112,5 @@ public class DriverManager extends EventFiringWebDriver {
 
 		return null;
 	}
-
 
 }

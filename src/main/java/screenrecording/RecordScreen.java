@@ -8,10 +8,11 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
+
 import com.xuggle.mediatool.IMediaWriter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.xuggler.ICodec;
@@ -21,17 +22,18 @@ public class RecordScreen {
 	private String outputFilename = "./target/videos/";
 	private static Dimension screenBounds;
 	private Thread t1;
-	private	IMediaWriter writer; 
+	private IMediaWriter writer;
+
 	public RecordScreen(String filename) throws IOException {
 		if (!FileUtils.getFile(outputFilename).exists())
-			FileUtils.forceMkdir(new File(outputFilename));
+			FileUtils.forceMkdir(new File(outputFilename).getAbsoluteFile());
 
 		outputFilename += filename
 				+ DateTime.now().toDateTimeISO().toString("hhmmssddMMyyyy")
 				+ ".mp4";
 		RecordScreen.screenBounds = Toolkit.getDefaultToolkit().getScreenSize();
 		RecordScreen.screenBounds.setSize(800, 640);
-		writer= ToolFactory.makeWriter(outputFilename);
+		writer = ToolFactory.makeWriter(outputFilename);
 		writer.open();
 
 	}
@@ -43,7 +45,7 @@ public class RecordScreen {
 	public void beginrecord() {
 		t1 = new Thread(new Runnable() {
 			public void run() {
-			
+
 				writer.addVideoStream(0, 0, ICodec.ID.CODEC_ID_MPEG4,
 						screenBounds.width, screenBounds.height);
 				long startTime = System.nanoTime();
@@ -68,7 +70,6 @@ public class RecordScreen {
 				}
 
 				writer.flush();
-	
 
 			}
 		});
@@ -97,7 +98,8 @@ public class RecordScreen {
 	public static BufferedImage getDesktopScreenshot() {
 		try {
 			Robot robot = new Robot();
-			Rectangle captureSize = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+			Rectangle captureSize = new Rectangle(Toolkit.getDefaultToolkit()
+					.getScreenSize());
 			return robot.createScreenCapture(captureSize);
 		} catch (AWTException e) {
 			e.printStackTrace();
@@ -106,8 +108,9 @@ public class RecordScreen {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	public String stoprecording() throws IOException, InterruptedException {
-		
+
 		t1.stop();
 		writer.close();
 		Thread.sleep(1000);

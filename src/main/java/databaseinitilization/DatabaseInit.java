@@ -58,7 +58,7 @@ public class DatabaseInit {
 		return DriverManager.getConnection("jdbc:sqlserver://" + hostname
 				+ "\\SQLEXPRESS;integratedSecurity=true;databaseName="
 				+ databasename);
-	
+
 	}
 
 	public static Connection getsqliteconnection(File databasefilepath)
@@ -108,8 +108,10 @@ public class DatabaseInit {
 		dbconnection.prepareStatement(query).execute();
 	}
 
-	//queries can be of type insert into tablename(colum1,....,columnn) values(?,......,?);
-	//queries can be of type update tablename set column1 =?, column2=? where columnn=?;
+	// queries can be of type insert into tablename(colum1,....,columnn)
+	// values(?,......,?);
+	// queries can be of type update tablename set column1 =?, column2=? where
+	// columnn=?;
 	public static int batchquery(String query, List<Map<String, String>> values)
 			throws SQLException {
 		int number_of_parameters = StringUtils.countMatches(query, "?");

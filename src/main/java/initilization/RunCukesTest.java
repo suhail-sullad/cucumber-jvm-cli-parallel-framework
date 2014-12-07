@@ -1,8 +1,8 @@
 package initilization;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,16 +15,18 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.joda.time.DateTime;
 
 public class RunCukesTest {
-	private static int invocationcount=0;
-	private static int maxinvocationcount=0;
+	private static int invocationcount = 0;
+	private static int maxinvocationcount = 0;
 
 	public static void main(String[] args) throws Exception {
 
 		Properties prop = new Properties();
-		FileInputStream input = new FileInputStream("./tests.properties");
+		FileInputStream input = new FileInputStream(new File(
+				"./tests.properties").getAbsoluteFile());
 		prop.load(input);
-		maxinvocationcount =Integer.parseInt(prop.getProperty("invocationcount"));
-		
+		maxinvocationcount = Integer.parseInt(prop
+				.getProperty("invocationcount"));
+
 		switch (prop.getProperty("parallel")) {
 		case "tags":
 			run_tags_in_parallel();
@@ -36,13 +38,14 @@ public class RunCukesTest {
 			run_sequentially();
 			break;
 		}
-		
+
 	}
 
 	private static void run_sequentially() throws IOException,
 			InterruptedException {
 		Properties prop = new Properties();
-		FileInputStream input = new FileInputStream("./tests.properties");
+		FileInputStream input = new FileInputStream(new File(
+				"./tests.properties").getAbsoluteFile());
 		prop.load(input);
 
 		List<String> arguments = new ArrayList<String>();
@@ -73,7 +76,7 @@ public class RunCukesTest {
 				arguments.add(packages);
 			}
 		}
-		
+
 		final String[] argv = arguments.toArray(new String[0]);
 		executetests(argv);
 
@@ -82,7 +85,8 @@ public class RunCukesTest {
 	public static void run_tags_in_parallel() throws IOException,
 			InterruptedException {
 		Properties prop = new Properties();
-		FileInputStream input = new FileInputStream("./tests.properties");
+		FileInputStream input = new FileInputStream(new File(
+				"./tests.properties").getAbsoluteFile());
 		prop.load(input);
 
 		String[] tags = prop.getProperty("tagstorun").split(",");
@@ -114,7 +118,7 @@ public class RunCukesTest {
 			}
 
 			final String[] argv = arguments.toArray(new String[0]);
-		
+
 			executetests(argv);
 		}
 	}
@@ -122,7 +126,8 @@ public class RunCukesTest {
 	public static void run_features_in_parallel() throws IOException,
 			InterruptedException {
 		Properties prop = new Properties();
-		FileInputStream input = new FileInputStream("./tests.properties");
+		FileInputStream input = new FileInputStream(new File(
+				"./tests.properties").getAbsoluteFile());
 		prop.load(input);
 		String[] features = getfilelist(prop.getProperty("featurefilepath"),
 				"feature");
@@ -147,16 +152,16 @@ public class RunCukesTest {
 
 			final String[] argv = arguments.toArray(new String[0]);
 			executetests(argv);
-			
 
 		}
-		
+
 	}
 
 	public static String[] getfilelist(String pathname, String type)
 			throws IOException {
-		Collection<File> files = FileUtils.listFilesAndDirs(new File(pathname),
-				TrueFileFilter.INSTANCE, DirectoryFileFilter.DIRECTORY);
+		Collection<File> files = FileUtils.listFilesAndDirs(
+				new File(pathname).getAbsoluteFile(), TrueFileFilter.INSTANCE,
+				DirectoryFileFilter.DIRECTORY);
 		List<String> filenames = new ArrayList<String>();
 		for (File file : files) {
 			if (file.getName().contains(type))
@@ -167,10 +172,10 @@ public class RunCukesTest {
 
 	public static void executetests(final String[] argv)
 			throws InterruptedException {
-				
-		while(invocationcount>maxinvocationcount-1)
+
+		while (invocationcount > maxinvocationcount - 1)
 			Thread.sleep(1000);
-		
+
 		ExecutorService es = Executors.newSingleThreadExecutor();
 		Thread.sleep(2000);
 		System.out.println(invocationcount);
@@ -183,19 +188,17 @@ public class RunCukesTest {
 				try {
 					cucumber.api.cli.Main.run(argv,
 							RunCukesTest.class.getClassLoader());
-					} catch (IOException e) {
+				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-				finally
-				{
-				invocationcount--;
+				} finally {
+					invocationcount--;
 				}
 			}
-			
+
 		});
-		
+
 		es.shutdown();
-	
+
 	}
 }
