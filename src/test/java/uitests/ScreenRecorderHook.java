@@ -1,18 +1,13 @@
 package uitests;
 
-import initilization.DriverManager;
-import initilization.ScenarioContext;
+import init.DriverManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
-import logging.WebDriverListner;
-import org.openqa.selenium.OutputType;
+import plugins.logging.WebDriverListner;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
-import screenrecording.RecordScreen;
-import cucumber.api.Scenario;
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
+import plugins.screenrecording.RecordScreen;
 
 public class ScreenRecorderHook {
 	private RecordScreen record;

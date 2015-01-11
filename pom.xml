@@ -72,11 +72,8 @@
 			<artifactId>cucumber-java</artifactId>
 			<version>1.2.0</version>
 		</dependency>
-		<dependency>
-			<groupId>info.cukes</groupId>
-			<artifactId>cucumber-core</artifactId>
-			<version>1.2.0</version>
-		</dependency>
+		<!-- <dependency> <groupId>info.cukes</groupId> <artifactId>cucumber-core</artifactId> 
+			<version>1.2.0</version> </dependency> -->
 		<dependency>
 			<groupId>info.cukes</groupId>
 			<artifactId>cucumber-jvm-deps</artifactId>
@@ -170,7 +167,7 @@
 			<version>1.0</version>
 			<systemPath>${basedir}\lib\autoitx4java.jar</systemPath>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>jacob</groupId>
 			<artifactId>jacob</artifactId>
@@ -178,6 +175,53 @@
 			<version>1.0</version>
 			<systemPath>${basedir}\lib\jacob.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>1.8.7</version>
+		</dependency>
+		<dependency>
+			<groupId>cucumber-core</groupId>
+			<artifactId>cucumber-core</artifactId>
+			<scope>system</scope>
+			<version>1.2.1</version>
+			<systemPath>${basedir}\lib\cucumber-core-1.2.1-EXCEL.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>sikulixapi-complete</groupId>
+			<artifactId>sikulixapi-complete</artifactId>
+			<scope>system</scope>
+			<version>1.1.0</version>
+			<systemPath>${basedir}\lib\sikulixapi-complete-1.1.0-plain.jar</systemPath>
+		</dependency>
+		<!-- new dependencies -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.10-FINAL</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.10-FINAL</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.3.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.3.3</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<resources>
@@ -212,7 +256,7 @@
 								<groupId>xuggle</groupId>
 								<artifactId>xuggle-xuggler</artifactId>
 							</executableDependency>
-							<mainClass>initilization.RunCukesTest</mainClass>
+							<mainClass>init.RunCukesTest</mainClass>
 							<cleanupDaemonThreads>false</cleanupDaemonThreads>
 						</configuration>
 					</execution>
@@ -223,7 +267,7 @@
 							<goal>java</goal>
 						</goals>
 						<configuration>
-							<mainClass>reporting.ReportGenerator</mainClass>
+							<mainClass>plugins.reporting.ReportGenerator</mainClass>
 							<cleanupDaemonThreads>false</cleanupDaemonThreads>
 						</configuration>
 					</execution>
