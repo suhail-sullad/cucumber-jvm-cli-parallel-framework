@@ -6,6 +6,9 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>cucumber jvm cli parallel</name>
 	<description>A simple project to show cucumber-jvm parallel abilities</description>
+	<properties>
+		<seleniumVersion>2.44.0</seleniumVersion>
+	</properties>
 	<repositories>
 		<repository>
 			<id>cucumber</id>
@@ -22,7 +25,7 @@
 		</repository>
 		<repository>
 			<id>xuggle repo</id>
-			<url>http://xuggle.googlecode.com/svn/trunk/repo/share/java/</url>
+			<url>https://files.liferay.com/mirrors/xuggle.googlecode.com/svn/trunk/repo/share/java/</url>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -61,11 +64,21 @@
 			<artifactId>calabash-jvm</artifactId>
 			<scope>test</scope>
 			<version>0.0.7</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>info.cukes</groupId>
 			<artifactId>cucumber-java</artifactId>
-			<version>1.2.0</version>
+			<version>1.2.5</version>
 		</dependency>
 		<!-- <dependency> <groupId>info.cukes</groupId> <artifactId>cucumber-core</artifactId> 
 			<version>1.2.0</version> </dependency> -->
@@ -87,12 +100,12 @@
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
-			<version>2.44.0</version>
+			<version>${seleniumVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-server</artifactId>
-			<version>2.44.0</version>
+			<version>${seleniumVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
@@ -102,43 +115,50 @@
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-firefox-driver</artifactId>
-			<version>2.44.0</version>
+			<version>${seleniumVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-support</artifactId>
-			<version>2.44.0</version>
+			<version>${seleniumVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-chrome-driver</artifactId>
-			<version>2.44.0</version>
+			<version>${seleniumVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-remote-driver</artifactId>
-			<version>2.44.0</version>
+			<version>${seleniumVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-ie-driver</artifactId>
-			<version>2.44.0</version>
+			<version>${seleniumVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-safari-driver</artifactId>
-			<version>2.44.0</version>
+			<version>${seleniumVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.detro.ghostdriver</groupId>
 			<artifactId>phantomjsdriver</artifactId>
 			<version>1.1.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/xuggle/xuggle-xuggler -->
 		<dependency>
 			<groupId>xuggle</groupId>
 			<artifactId>xuggle-xuggler</artifactId>
 			<version>5.4</version>
 		</dependency>
+<dependency>
+    <groupId>xml-apis</groupId>
+    <artifactId>xml-apis</artifactId>
+    <version>1.4.01</version>
+</dependency>
+
 		<dependency>
 			<groupId>net.masterthought</groupId>
 			<artifactId>cucumber-reporting</artifactId>
@@ -216,7 +236,19 @@
 			<artifactId>httpcore</artifactId>
 			<version>4.3.3</version>
 		</dependency>
+		<!-- Karate for API Testing -->
+		<dependency>
+			<groupId>com.intuit.karate</groupId>
+			<artifactId>karate-apache</artifactId>
+			<version>0.6.2</version>
 
+		</dependency>
+		<dependency>
+			<groupId>com.intuit.karate</groupId>
+			<artifactId>karate-core</artifactId>
+			<version>0.6.2</version>
+
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>
@@ -254,6 +286,7 @@
 							<mainClass>init.RunCukesTest</mainClass>
 							<cleanupDaemonThreads>false</cleanupDaemonThreads>
 						</configuration>
+
 					</execution>
 					<execution>
 						<id>ReportGenerate</id>

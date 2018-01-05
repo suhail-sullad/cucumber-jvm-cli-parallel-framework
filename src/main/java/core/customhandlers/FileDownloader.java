@@ -2,6 +2,7 @@ package core.customhandlers;
 
 import com.google.common.annotations.Beta;
 
+import ch.qos.logback.classic.Logger;
 import core.Core;
 import core.handlers.FileHandler;
 
@@ -19,13 +20,11 @@ import org.apache.http.impl.client.HttpClients;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Beta
 public class FileDownloader {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Core.class);
+    private static final Logger LOGGER = null;
     private WebDriver driver;
     private String downloadPath = System.getProperty("java.io.tmpdir");
 
@@ -101,7 +100,7 @@ public class FileDownloader {
         FileHandler downloadedFile = new FileHandler(downloadPath + downloadURL.getFile().replaceFirst("/|\\\\", ""), true);
         try {
             int status = client.execute(getRequest,localContext).getStatusLine().getStatusCode();
-            LOGGER.info("HTTP Status {} when getting '{}'", status, downloadURL.toExternalForm());
+          //  LOGGER.info("HTTP Status {} when getting '{}'", status, downloadURL.toExternalForm());
             BufferedInputStream in = new BufferedInputStream(client.execute(getRequest,localContext).getEntity().getContent());
             int offset = 0;
             int len = 4096;
@@ -112,9 +111,9 @@ public class FileDownloader {
             }
             downloadedFile.close();
             in.close();
-            LOGGER.info("File downloaded to '{}'", downloadedFile.getAbsoluteFile());
+          //  LOGGER.info("File downloaded to '{}'", downloadedFile.getAbsoluteFile());
         } catch (Exception Ex) {
-            LOGGER.error("Download failed: {}", Ex);
+         //   LOGGER.error("Download failed: {}", Ex);
             throw new Exception("Download failed!");
         } finally {
                client.close();

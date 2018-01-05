@@ -14,6 +14,11 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.joda.time.DateTime;
 
+import com.intuit.karate.cucumber.KarateFeature;
+import com.intuit.karate.cucumber.KarateJunitAndJsonReporter;
+import com.intuit.karate.cucumber.KarateRuntime;
+import com.jayway.jsonpath.internal.JsonFormatter;
+
 public class RunCukesTest {
 	private static int invocationcount = 0;
 	private static int maxinvocationcount = 0;
@@ -21,11 +26,9 @@ public class RunCukesTest {
 	public static void main(String[] args) throws Exception {
 
 		Properties prop = new Properties();
-		FileInputStream input = new FileInputStream(new File(
-				"./tests.properties").getAbsoluteFile());
+		FileInputStream input = new FileInputStream(new File("./tests.properties").getAbsoluteFile());
 		prop.load(input);
-		maxinvocationcount = Integer.parseInt(prop
-				.getProperty("invocationcount"));
+		maxinvocationcount = Integer.parseInt(prop.getProperty("invocationcount"));
 
 		switch (prop.getProperty("parallel")) {
 		case "tags":
@@ -34,6 +37,9 @@ public class RunCukesTest {
 		case "features":
 			run_features_in_parallel();
 			break;
+		case "apifeatures":
+			run_api_features();
+			break;
 		default:
 			run_sequentially();
 			break;
@@ -41,24 +47,41 @@ public class RunCukesTest {
 
 	}
 
-	private static void run_sequentially() throws IOException,
-			InterruptedException {
+	private static void run_api_features() throws IOException {
+
 		Properties prop = new Properties();
-		FileInputStream input = new FileInputStream(new File(
-				"./tests.properties").getAbsoluteFile());
+		FileInputStream input = new FileInputStream(new File("./tests.properties").getAbsoluteFile());
 		prop.load(input);
 
 		List<String> arguments = new ArrayList<String>();
-		String[] features = getfilelist(prop.getProperty("featurefilepath"),
-				"feature");
+		String[] features = getfilelist(prop.getProperty("apifeaturefilepath"), "feature");
+		JsonFormatter jf = new JsonFormatter();
+
+		for (String string : features) {
+			File file = new File(string);
+			KarateFeature kf = new KarateFeature(file);
+			KarateJunitAndJsonReporter reporter = new KarateJunitAndJsonReporter(file.getPath(),
+					"./target/cucumber-reports/api");
+			KarateRuntime runtime = kf.getRuntime(reporter);
+			kf.getFeature().run(reporter, reporter, runtime);
+			reporter.done();
+		}
+	}
+
+	private static void run_sequentially() throws IOException, InterruptedException {
+		Properties prop = new Properties();
+		FileInputStream input = new FileInputStream(new File("./tests.properties").getAbsoluteFile());
+		prop.load(input);
+
+		List<String> arguments = new ArrayList<String>();
+		String[] features = getfilelist(prop.getProperty("featurefilepath"), "feature");
 		for (String feature : features)
 			arguments.add(feature);
 
 		arguments.add("--format");
 		arguments.add("pretty");
 		arguments.add("--format");
-		arguments.add("json:./target/cucumber-reports/"
-				+ DateTime.now().toDateTimeISO().toString("hhmmssddMMyyyy")
+		arguments.add("json:./target/cucumber-reports/" + DateTime.now().toDateTimeISO().toString("hhmmssddMMyyyy")
 				+ ".json");
 		String[] tags = prop.getProperty("tagstorun").split(",");
 
@@ -82,34 +105,29 @@ public class RunCukesTest {
 
 	}
 
-	public static void run_tags_in_parallel() throws IOException,
-			InterruptedException {
+	public static void run_tags_in_parallel() throws IOException, InterruptedException {
 		Properties prop = new Properties();
-		FileInputStream input = new FileInputStream(new File(
-				"./tests.properties").getAbsoluteFile());
+		FileInputStream input = new FileInputStream(new File("./tests.properties").getAbsoluteFile());
 		prop.load(input);
 
 		String[] tags = prop.getProperty("tagstorun").split(",");
 		for (String runnabletags : tags) {
 			List<String> arguments = new ArrayList<String>();
-			String[] features = getfilelist(
-					prop.getProperty("featurefilepath"), "feature");
+			String[] features = getfilelist(prop.getProperty("featurefilepath"), "feature");
 			for (String feature : features)
 				arguments.add(feature);
 
 			arguments.add("--format");
 			arguments.add("pretty");
 			arguments.add("--format");
-			arguments.add("json:./target/cucumber-reports/"
-					+ DateTime.now().toDateTimeISO().toString("hhmmssddMMyyyy")
+			arguments.add("json:./target/cucumber-reports/" + DateTime.now().toDateTimeISO().toString("hhmmssddMMyyyy")
 					+ ".json");
 			if (!runnabletags.contains("none")) {
 				arguments.add("--tags");
 				arguments.add("@" + runnabletags);
 			}
 
-			String[] gluepackages = prop.getProperty("gluedpackages")
-					.split(",");
+			String[] gluepackages = prop.getProperty("gluedpackages").split(",");
 			for (String packages : gluepackages) {
 				if (!packages.contains("none")) {
 					arguments.add("--glue");
@@ -123,26 +141,21 @@ public class RunCukesTest {
 		}
 	}
 
-	public static void run_features_in_parallel() throws IOException,
-			InterruptedException {
+	public static void run_features_in_parallel() throws IOException, InterruptedException {
 		Properties prop = new Properties();
-		FileInputStream input = new FileInputStream(new File(
-				"./tests.properties").getAbsoluteFile());
+		FileInputStream input = new FileInputStream(new File("./tests.properties").getAbsoluteFile());
 		prop.load(input);
-		String[] features = getfilelist(prop.getProperty("featurefilepath"),
-				"feature");
+		String[] features = getfilelist(prop.getProperty("featurefilepath"), "feature");
 		for (String feature : features) {
 			List<String> arguments = new ArrayList<String>();
 			arguments.add(feature);
 			arguments.add("--format");
 			arguments.add("pretty");
 			arguments.add("--format");
-			arguments.add("json:./target/cucumber-reports/"
-					+ DateTime.now().toDateTimeISO().toString("hhmmssddMMyyyy")
+			arguments.add("json:./target/cucumber-reports/" + DateTime.now().toDateTimeISO().toString("hhmmssddMMyyyy")
 					+ ".json");
 
-			String[] gluepackages = prop.getProperty("gluedpackages")
-					.split(",");
+			String[] gluepackages = prop.getProperty("gluedpackages").split(",");
 			for (String packages : gluepackages) {
 				if (!packages.contains("none")) {
 					arguments.add("--glue");
@@ -157,11 +170,9 @@ public class RunCukesTest {
 
 	}
 
-	public static String[] getfilelist(String pathname, String type)
-			throws IOException {
-		Collection<File> files = FileUtils.listFilesAndDirs(
-				new File(pathname).getAbsoluteFile(), TrueFileFilter.INSTANCE,
-				DirectoryFileFilter.DIRECTORY);
+	public static String[] getfilelist(String pathname, String type) throws IOException {
+		Collection<File> files = FileUtils.listFilesAndDirs(new File(pathname).getAbsoluteFile(),
+				TrueFileFilter.INSTANCE, DirectoryFileFilter.DIRECTORY);
 		List<String> filenames = new ArrayList<String>();
 		for (File file : files) {
 			if (file.getName().contains(type))
@@ -170,8 +181,7 @@ public class RunCukesTest {
 		return filenames.toArray(new String[0]);
 	}
 
-	public static void executetests(final String[] argv)
-			throws InterruptedException {
+	public static void executetests(final String[] argv) throws InterruptedException {
 
 		while (invocationcount > maxinvocationcount - 1)
 			Thread.sleep(1000);
@@ -186,8 +196,7 @@ public class RunCukesTest {
 				// TODO Auto-generated method stub
 				invocationcount++;
 				try {
-					cucumber.api.cli.Main.run(argv,
-							RunCukesTest.class.getClassLoader());
+					cucumber.api.cli.Main.run(argv, RunCukesTest.class.getClassLoader());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

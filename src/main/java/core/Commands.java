@@ -24,6 +24,8 @@ import com.thoughtworks.selenium.Selenium;
 import com.thoughtworks.selenium.webdriven.JavascriptLibrary;
 import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
 
+import ch.qos.logback.classic.Logger;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.interactions.HasInputDevices;
@@ -32,9 +34,6 @@ import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.awt.*;
 import java.io.File;
 import java.util.Iterator;
@@ -47,7 +46,7 @@ public class Commands {
     private JavascriptLibrary jsLib = new JavascriptLibrary();
     private LocatorHandler loc = new LocatorHandler();
     private int defaultTimeout = 10000;
-    public static final Logger logger = LoggerFactory.getLogger(Commands.class);
+    public static final Logger logger = null;
 
     public Commands(WebDriver driverInstance) {
         driver = driverInstance;

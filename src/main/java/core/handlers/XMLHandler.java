@@ -2,10 +2,10 @@
 
 package core.handlers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
+
+import ch.qos.logback.classic.Logger;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class XMLHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(XMLHandler.class);
+    private static final Logger LOGGER = null;
     private Document xmlDocument = null;
     private LocalNamespaceContext namespaceMappings = new LocalNamespaceContext();
 

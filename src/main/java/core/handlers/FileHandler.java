@@ -9,12 +9,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.Logger;
 public class FileHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileHandler.class);
+    private static final Logger LOGGER = null;
     private final String sepReg = "(\\\\|/)";
     private boolean createIfNotExist;
     private boolean appendToFile;
@@ -33,7 +32,7 @@ public class FileHandler {
                 this.currentFile = fileObject;
                 this.fileIsReadable = true;
             } else {
-                LOGGER.error("Unable to read '{}'", this.filePath + this.fileName);
+               // LOGGER.error("Unable to read '{}'", this.filePath + this.fileName);
                 throw new IOException("Unable to read file " + this.filePath + this.fileName);
             }
         }
@@ -68,7 +67,7 @@ public class FileHandler {
 
     public final void setFileName(String value) {
         if (value.matches(sepReg)) {
-            LOGGER.error("The filename '{}' is not valid!", value);
+           // LOGGER.error("The filename '{}' is not valid!", value);
             return;
         }
         this.fileName = value;
@@ -153,7 +152,7 @@ public class FileHandler {
                 this.currentFile = fileToOpen;
                 this.fileIsReadable = true;
             } else {
-                LOGGER.error("Unable to read '{}'", this.filePath + this.fileName);
+              //  LOGGER.error("Unable to read '{}'", this.filePath + this.fileName);
                 throw new IOException("Unable to read file " + this.filePath + this.fileName);
             }
         } else if (this.createIfNotExist) {
@@ -164,7 +163,7 @@ public class FileHandler {
             fileToOpen.createNewFile();
             this.currentFile = fileToOpen;
         } else {
-            LOGGER.error("'{}' does not exist!", this.filePath + this.fileName);
+           // LOGGER.error("'{}' does not exist!", this.filePath + this.fileName);
             throw new IOException(this.filePath + this.fileName + "does not exist!");
         }
 
@@ -221,15 +220,15 @@ public class FileHandler {
                     FileUtils.copyFile(this.currentFile, fileDestination);
                     return true;
                 } catch (Exception Ex) {
-                    LOGGER.warn("Failed to copy file to '{}'", absoluteFileName);
+                   // LOGGER.warn("Failed to copy file to '{}'", absoluteFileName);
                     return false;
                 }
             } else {
-                LOGGER.error("Unable to read '{}'", this.filePath + this.fileName);
+               // LOGGER.error("Unable to read '{}'", this.filePath + this.fileName);
                 throw new IOException("Unable to read file " + this.filePath + this.fileName);
             }
         } else {
-            LOGGER.error("'{}' does not exist!", this.filePath + this.fileName);
+            //LOGGER.error("'{}' does not exist!", this.filePath + this.fileName);
             throw new IOException(this.filePath + this.fileName + "does not exist!");
         }
     }

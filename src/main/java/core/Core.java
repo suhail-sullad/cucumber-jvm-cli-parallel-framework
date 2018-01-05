@@ -13,13 +13,13 @@ package core;
 import core.globals.GlobalSettings;
 import com.thoughtworks.selenium.Selenium;
 
+import ch.qos.logback.classic.Logger;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.*;
 import org.openqa.selenium.firefox.*;
 import org.openqa.selenium.htmlunit.*;
 import org.openqa.selenium.ie.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 //import core.customhandlers.handler;
 import core.BrowserConfiguration.htmlUnitEmulation;
 import core.BrowserConfiguration.selectedBrowser;
@@ -29,7 +29,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 public class Core implements Configuration {
 
     public static GlobalSettings settings = new GlobalSettings();
-    public static final Logger logger = LoggerFactory.getLogger(Core.class);
+    public static final Logger logger = null;
     private BrowserConfiguration browserDetails;
     // Selenium Objects
     protected WebDriver driver;
@@ -62,7 +62,7 @@ public class Core implements Configuration {
      */
     public void startSelenium() {
         if (driver != null) {
-            logger.error("There appears to be an existing driver instance.. Details are: {}", driver);
+           // logger.error("There appears to be an existing driver instance.. Details are: {}", driver);
             logger.error("Shutting down existing instance and starting up again...");
             stopSelenium(driver);
         }
@@ -144,7 +144,7 @@ public class Core implements Configuration {
             }
             getReleaseVersion();
         } catch (Exception x) {
-            logger.error("Error in EbselenCore.setBrowser: {}", x.getMessage());
+           // logger.error("Error in EbselenCore.setBrowser: {}", x.getMessage());
             return driverObject;
         }
         return driverObject;
@@ -179,12 +179,12 @@ public class Core implements Configuration {
                 try {
                     driverObject.quit();
                 } catch (Exception x) {
-                    logger.error("Did not manage to quit driver object cleanly: {}", x.getMessage());
+                 //   logger.error("Did not manage to quit driver object cleanly: {}", x.getMessage());
                 }
                 driverObject = null;
             }
         } catch (Exception x) {
-            logger.error("Error Quitting Browser: {}", x.getMessage());
+          //  logger.error("Error Quitting Browser: {}", x.getMessage());
             logger.error("Killing Selenium!");
             Runtime.getRuntime().halt(1);
         }
