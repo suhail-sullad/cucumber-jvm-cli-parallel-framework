@@ -61,7 +61,7 @@ public class RunCukesTest {
 			File file = new File(string);
 			KarateFeature kf = new KarateFeature(file);
 			KarateJunitAndJsonReporter reporter = new KarateJunitAndJsonReporter(file.getPath(),
-					"./target/cucumber-reports/api");
+					"./target/cucumber-reports/api/"+file.getName()+".json");
 			KarateRuntime runtime = kf.getRuntime(reporter);
 			kf.getFeature().run(reporter, reporter, runtime);
 			reporter.done();
