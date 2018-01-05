@@ -21,7 +21,7 @@ public interface Configuration {
      */
     public enum selectSite {
 
-        ARDESCOTEST
+        SAMPLETEST
     }
 
     /**

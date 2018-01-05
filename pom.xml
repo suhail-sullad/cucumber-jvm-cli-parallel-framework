@@ -7,7 +7,7 @@
 	<name>cucumber jvm cli parallel</name>
 	<description>A simple project to show cucumber-jvm parallel abilities</description>
 	<properties>
-		<seleniumVersion>2.44.0</seleniumVersion>
+		<seleniumVersion>3.8.1</seleniumVersion>
 		<jackson.version>2.9.0</jackson.version>
 	</properties>
 	<repositories>
@@ -117,22 +117,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-htmlunit-driver</artifactId>
-			<version>2.44.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-firefox-driver</artifactId>
 			<version>${seleniumVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-support</artifactId>
-			<version>${seleniumVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-chrome-driver</artifactId>
 			<version>${seleniumVersion}</version>
 		</dependency>
 		<dependency>
@@ -151,10 +141,18 @@
 			<version>${seleniumVersion}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.github.detro.ghostdriver</groupId>
-			<artifactId>phantomjsdriver</artifactId>
-			<version>1.1.0</version>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-edge-driver</artifactId>
+			<version>${seleniumVersion}</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.codeborne/phantomjsdriver -->
+		<dependency>
+			<groupId>com.codeborne</groupId>
+			<artifactId>phantomjsdriver</artifactId>
+			<version>1.4.3</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/xuggle/xuggle-xuggler -->
 		<dependency>
 			<groupId>xuggle</groupId>
@@ -228,12 +226,12 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.10-FINAL</version>
+			<version>3.17</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>3.10-FINAL</version>
+			<version>3.17</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
