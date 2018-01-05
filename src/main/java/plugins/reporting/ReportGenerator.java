@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.google.gson.stream.JsonReader;
+
+import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
 
 public class ReportGenerator {
@@ -18,21 +21,19 @@ public class ReportGenerator {
 	 */
 	public static void main(String[] args) throws Exception {
 		Properties reportproperties = new Properties();
-		FileInputStream reportinputstream = new FileInputStream(new File(
-				"./report.properties").getAbsoluteFile());
+		FileInputStream reportinputstream = new FileInputStream(new File("./report.properties").getAbsoluteFile());
 		reportproperties.load(reportinputstream);
 
-		String[] reportfiles = RunCukesTest.getfilelist(
-				"./target/cucumber-reports", "json");
+		String[] reportfiles = RunCukesTest.getfilelist("./target/cucumber-reports", "json");
 		List<String> jsonReports = new ArrayList<String>();
 		for (String filename : reportfiles) {
 			jsonReports.add(filename);
 		}
-		ReportBuilder rp = new ReportBuilder(jsonReports, new File(
-				reportproperties.getProperty("outputdirectorypath")), "",
-				reportproperties.getProperty("buildnumber"),
-				reportproperties.getProperty("buildname"), true, true, true,
-				false, false, "", false);
+
+		Configuration cfg = new Configuration(new File(reportproperties.getProperty("outputdirectorypath")),
+				reportproperties.getProperty("buildname"));
+		cfg.setBuildNumber(reportproperties.getProperty("buildnumber"));
+		ReportBuilder rp = new ReportBuilder(jsonReports, cfg);
 		rp.generateReports();
 
 	}
