@@ -34,7 +34,7 @@ public class DriverManager extends EventFiringWebDriver {
 			// To use cucumber-eclipse plugin set the user directory path to
 			// your project folder
 
-			FileInputStream input = new FileInputStream(new File("./browser.properties").getAbsolutePath());
+			FileInputStream input = new FileInputStream(new File("./resources/browser.properties").getAbsolutePath());
 			prop.load(input);
 			// prop.getProperty("browsername")
 			switch (Browsers.valueOf(prop.getProperty("browsername"))) {

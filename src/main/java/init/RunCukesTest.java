@@ -26,7 +26,7 @@ public class RunCukesTest {
 	public static void main(String[] args) throws Exception {
 
 		Properties prop = new Properties();
-		FileInputStream input = new FileInputStream(new File("./tests.properties").getAbsoluteFile());
+		FileInputStream input = new FileInputStream(new File("./resources/tests.properties").getAbsoluteFile());
 		prop.load(input);
 		maxinvocationcount = Integer.parseInt(prop.getProperty("invocationcount"));
 
@@ -50,7 +50,7 @@ public class RunCukesTest {
 	private static void run_api_features() throws IOException {
 
 		Properties prop = new Properties();
-		FileInputStream input = new FileInputStream(new File("./tests.properties").getAbsoluteFile());
+		FileInputStream input = new FileInputStream(new File("./resources/tests.properties").getAbsoluteFile());
 		prop.load(input);
 
 		List<String> arguments = new ArrayList<String>();
@@ -70,7 +70,7 @@ public class RunCukesTest {
 
 	private static void run_sequentially() throws IOException, InterruptedException {
 		Properties prop = new Properties();
-		FileInputStream input = new FileInputStream(new File("./tests.properties").getAbsoluteFile());
+		FileInputStream input = new FileInputStream(new File("./resources/tests.properties").getAbsoluteFile());
 		prop.load(input);
 
 		List<String> arguments = new ArrayList<String>();
@@ -107,7 +107,7 @@ public class RunCukesTest {
 
 	public static void run_tags_in_parallel() throws IOException, InterruptedException {
 		Properties prop = new Properties();
-		FileInputStream input = new FileInputStream(new File("./tests.properties").getAbsoluteFile());
+		FileInputStream input = new FileInputStream(new File("./resources/tests.properties").getAbsoluteFile());
 		prop.load(input);
 
 		String[] tags = prop.getProperty("tagstorun").split(",");
@@ -143,7 +143,7 @@ public class RunCukesTest {
 
 	public static void run_features_in_parallel() throws IOException, InterruptedException {
 		Properties prop = new Properties();
-		FileInputStream input = new FileInputStream(new File("./tests.properties").getAbsoluteFile());
+		FileInputStream input = new FileInputStream(new File("./resources/tests.properties").getAbsoluteFile());
 		prop.load(input);
 		String[] features = getfilelist(prop.getProperty("featurefilepath"), "feature");
 		for (String feature : features) {

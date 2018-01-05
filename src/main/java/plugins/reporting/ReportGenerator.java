@@ -21,7 +21,7 @@ public class ReportGenerator {
 	 */
 	public static void main(String[] args) throws Exception {
 		Properties reportproperties = new Properties();
-		FileInputStream reportinputstream = new FileInputStream(new File("./report.properties").getAbsoluteFile());
+		FileInputStream reportinputstream = new FileInputStream(new File("./resources/report.properties").getAbsoluteFile());
 		reportproperties.load(reportinputstream);
 
 		String[] reportfiles = RunCukesTest.getfilelist("./target/cucumber-reports", "json");

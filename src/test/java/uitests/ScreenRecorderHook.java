@@ -19,7 +19,7 @@ public class ScreenRecorderHook {
 	public ScreenRecorderHook(DriverManager webdriver) throws IOException {
 		Properties prop = new Properties();
 		FileInputStream input = new FileInputStream(new File(
-				"./tests.properties").getAbsoluteFile());
+				"./resources/tests.properties").getAbsoluteFile());
 		prop.load(input);
 
 		this.fd = webdriver;

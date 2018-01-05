@@ -14,7 +14,7 @@ public class ReportMailer {
 		// Load properties from a file
 		Properties prop = new Properties();
 		FileInputStream input = new FileInputStream(new File(
-				"./mailer.properties").getAbsoluteFile());
+				"./resources/mailer.properties").getAbsoluteFile());
 		prop.load(input);
 		// Create the email message
 		HtmlEmail email = new HtmlEmail();
