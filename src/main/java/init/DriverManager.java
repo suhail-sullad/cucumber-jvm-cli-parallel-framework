@@ -27,20 +27,19 @@ public class DriverManager extends EventFiringWebDriver {
 
 	public static WebDriver getdriver() {
 		// TODO Auto-generated method stub
-		Properties prop = new Properties();
+
 		invocationcount++;
 		try {
 			DesiredCapabilities capabilities = null;
 			// To use cucumber-eclipse plugin set the user directory path to
 			// your project folder
 
-			FileInputStream input = new FileInputStream(new File("./resources/browser.properties").getAbsolutePath());
-			prop.load(input);
 			// prop.getProperty("browsername")
-			switch (Browsers.valueOf(prop.getProperty("browsername"))) {
+			switch (Browsers.valueOf(PropertyLoader.provider.getProperty("browsername", String.class))) {
 			case CHROME:
-				ChromeDriverService cds = new ChromeDriverService.Builder()
-						.usingDriverExecutable(new File(prop.getProperty("chromebrowserdriverpath")).getAbsoluteFile())
+				ChromeDriverService cds = new ChromeDriverService.Builder().usingDriverExecutable(
+						new File(PropertyLoader.provider.getProperty("chromebrowserdriverpath", String.class))
+								.getAbsoluteFile())
 						.usingAnyFreePort().build();
 
 				return new ChromeDriver(cds);
@@ -49,8 +48,9 @@ public class DriverManager extends EventFiringWebDriver {
 				return new FirefoxDriver();
 
 			case INTERNET_EXPLORER:
-				InternetExplorerDriverService ids = new InternetExplorerDriverService.Builder()
-						.usingDriverExecutable(new File(prop.getProperty("iebrowserdriverpath")).getAbsoluteFile())
+				InternetExplorerDriverService ids = new InternetExplorerDriverService.Builder().usingDriverExecutable(
+						new File(PropertyLoader.provider.getProperty("iebrowserdriverpath", String.class))
+								.getAbsoluteFile())
 						.usingAnyFreePort().build();
 				return new InternetExplorerDriver(ids);
 
@@ -87,8 +87,9 @@ public class DriverManager extends EventFiringWebDriver {
 				return new FirefoxDriver();
 
 			}
-			//return new RemoteWebDriver(new URL(prop.getProperty("remotedriverurl")), capabilities);
-		} catch (IOException e) {
+			// return new RemoteWebDriver(new
+			// URL(prop.getProperty("remotedriverurl")), capabilities);
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

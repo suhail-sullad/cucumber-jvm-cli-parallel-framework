@@ -21,19 +21,14 @@ public class ReportGenerator {
 	 */
 	public static void main(String[] args) throws Exception {
 		Properties reportproperties = new Properties();
-		FileInputStream reportinputstream = new FileInputStream(new File("./resources/report.properties").getAbsoluteFile());
+		FileInputStream reportinputstream = new FileInputStream(
+				new File("./resources/report.properties").getAbsoluteFile());
 		reportproperties.load(reportinputstream);
-
-		String[] reportfiles = RunCukesTest.getfilelist("./target/cucumber-reports", "json");
-		List<String> jsonReports = new ArrayList<String>();
-		for (String filename : reportfiles) {
-			jsonReports.add(filename);
-		}
-
+		List<String> reportfiles = RunCukesTest.getfilelist("./target/cucumber-reports", "json");
 		Configuration cfg = new Configuration(new File(reportproperties.getProperty("outputdirectorypath")),
 				reportproperties.getProperty("buildname"));
 		cfg.setBuildNumber(reportproperties.getProperty("buildnumber"));
-		ReportBuilder rp = new ReportBuilder(jsonReports, cfg);
+		ReportBuilder rp = new ReportBuilder(reportfiles, cfg);
 		rp.generateReports();
 
 	}
