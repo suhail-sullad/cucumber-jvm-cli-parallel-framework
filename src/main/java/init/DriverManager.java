@@ -9,6 +9,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.GeckoDriverService;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerDriverService;
@@ -27,7 +28,8 @@ public class DriverManager extends EventFiringWebDriver {
 
 	public static WebDriver getdriver() {
 		// TODO Auto-generated method stub
-
+		if (null == PropertyLoader.provider)
+			PropertyLoader.init();
 		invocationcount++;
 		try {
 			DesiredCapabilities capabilities = null;
@@ -35,6 +37,7 @@ public class DriverManager extends EventFiringWebDriver {
 			// your project folder
 
 			// prop.getProperty("browsername")
+
 			switch (Browsers.valueOf(PropertyLoader.provider.getProperty("browsername", String.class))) {
 			case CHROME:
 				ChromeDriverService cds = new ChromeDriverService.Builder().usingDriverExecutable(
@@ -45,7 +48,11 @@ public class DriverManager extends EventFiringWebDriver {
 				return new ChromeDriver(cds);
 
 			case FIREFOX:
-				return new FirefoxDriver();
+				GeckoDriverService gds = new GeckoDriverService.Builder().usingDriverExecutable(
+						new File(PropertyLoader.provider.getProperty("webdriver.gecko.driver", String.class))
+								.getAbsoluteFile())
+						.usingAnyFreePort().build();
+				return new FirefoxDriver(gds);
 
 			case INTERNET_EXPLORER:
 				InternetExplorerDriverService ids = new InternetExplorerDriverService.Builder().usingDriverExecutable(

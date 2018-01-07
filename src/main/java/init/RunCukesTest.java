@@ -148,6 +148,7 @@ public class RunCukesTest {
 		
 		List<String> features =getfilelist(PropertyLoader.provider.getProperty("featurefilepath", String.class), "feature");
 		for (String feature : features) {
+			System.out.println("Current Feature: "+ feature);
 			List<String> arguments = new ArrayList<String>();
 			arguments.add(feature);
 			arguments.add("--format");
@@ -165,7 +166,7 @@ public class RunCukesTest {
 					arguments.add(packages);
 				}
 			}
-
+			System.out.println("Arguments sent:"+ arguments);
 			final String[] argv = arguments.toArray(new String[0]);
 			executeUITests(argv);
 
