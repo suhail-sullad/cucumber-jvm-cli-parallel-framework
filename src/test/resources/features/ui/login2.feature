@@ -1,10 +1,11 @@
 Feature: To test for ecommerce parallel run
 
-Scenario: To verify flipkart page is opened
-	Given i open "http://www.flipkart.com"
-	Then the page should be opened
+Scenario Outline: To verify if websites are loaded from file
+	Given i have numerous examples
+    When i send "<site name>" and "<site url>"
+    Then the user should be prompted with"<title>"
 
-Scenario: To verify amazon page is opened
-	Given i open "http://www.amazon.com"
-	Then the page should be opened
+    Examples: Path:C:\Users\suhail_sullad\Downloads\Book1.xlsx  SheetIndex:0
+      | site name | site url | title |
+      |			  |			 |		 |
 	

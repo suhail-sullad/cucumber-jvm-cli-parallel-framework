@@ -203,20 +203,13 @@
 			<artifactId>pdfbox</artifactId>
 			<version>1.8.7</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.sikulix/sikulixapi -->
 		<dependency>
-			<groupId>cucumber-core</groupId>
-			<artifactId>cucumber-core</artifactId>
-			<scope>system</scope>
-			<version>1.2.1</version>
-			<systemPath>${basedir}\lib\cucumber-core-1.2.1-EXCEL.jar</systemPath>
+			<groupId>com.sikulix</groupId>
+			<artifactId>sikulixapi</artifactId>
+			<version>1.1.1</version>
 		</dependency>
- 		<dependency>
-			<groupId>sikulixapi-complete</groupId>
-			<artifactId>sikulixapi-complete</artifactId>
-			<scope>system</scope>
-			<version>1.1.0</version>
-			<systemPath>${basedir}\lib\sikulixapi-complete-1.1.0-plain.jar</systemPath>
-		</dependency>
+
 		<!-- new dependencies -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

@@ -13,6 +13,7 @@ import org.openqa.selenium.firefox.GeckoDriverService;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerDriverService;
+import org.openqa.selenium.os.WindowsUtils;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -37,7 +38,7 @@ public class DriverManager extends EventFiringWebDriver {
 			// your project folder
 
 			// prop.getProperty("browsername")
-
+			
 			switch (Browsers.valueOf(PropertyLoader.provider.getProperty("browsername", String.class))) {
 			case CHROME:
 				ChromeDriverService cds = new ChromeDriverService.Builder().usingDriverExecutable(
