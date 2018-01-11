@@ -183,21 +183,21 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.34</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/de.openkeyword/autoit -->
 		<dependency>
-			<groupId>autoitx4java</groupId>
-			<artifactId>autoitx4java</artifactId>
-			<scope>system</scope>
-			<version>1.0</version>
-			<systemPath>${basedir}\lib\autoitx4java.jar</systemPath>
+			<groupId>de.openkeyword</groupId>
+			<artifactId>autoit</artifactId>
+			<version>0.1.13</version>
 		</dependency>
 
+
+		<!-- https://mvnrepository.com/artifact/net.sf.jacob-project/jacob -->
 		<dependency>
-			<groupId>jacob</groupId>
+			<groupId>net.sf.jacob-project</groupId>
 			<artifactId>jacob</artifactId>
-			<scope>system</scope>
-			<version>1.0</version>
-			<systemPath>${basedir}\lib\jacob.jar</systemPath>
+			<version>1.14.3</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
@@ -301,6 +301,17 @@
 						</goals>
 						<configuration>
 							<mainClass>plugins.reporting.ReportGenerator</mainClass>
+							<cleanupDaemonThreads>false</cleanupDaemonThreads>
+						</configuration>
+					</execution>
+					<execution>
+						<id>Send Email Report</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>plugins.emailer.ReportMailer</mainClass>
 							<cleanupDaemonThreads>false</cleanupDaemonThreads>
 						</configuration>
 					</execution>

@@ -3,38 +3,38 @@ package plugins.emailer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
+import org.cfg4j.provider.GenericType;
+
+import init.PropertyLoader;
 
 public class ReportMailer {
 
 	public static void sendemail() throws EmailException, IOException {
 
-		// Load properties from a file
-		Properties prop = new Properties();
-		FileInputStream input = new FileInputStream(new File(
-				"./resources/mailer.properties").getAbsoluteFile());
-		prop.load(input);
 		// Create the email message
 		HtmlEmail email = new HtmlEmail();
-		email.setHostName(prop.getProperty("MailServer"));
-		if (Boolean.parseBoolean(prop.getProperty("Authentication")))
-			email.setAuthentication(prop.getProperty("MailUsername"),
-					prop.getProperty("MailPassword"));
+		email.setHostName(PropertyLoader.provider.getProperty("MailServer", String.class));
+		if (PropertyLoader.provider.getProperty("Authentication", Boolean.class))
+			email.setAuthentication(PropertyLoader.provider.getProperty("MailUsername", String.class),
+					PropertyLoader.provider.getProperty("MailPassword", String.class));
 
-		email.setSubject(prop.getProperty("MailSubject"));
-		email.setFrom(prop.getProperty("MailFrom"));
-		String[] SendToList = prop.getProperty("SendToList").split(",");
+		email.setSubject(PropertyLoader.provider.getProperty("MailSubject", String.class));
+		email.setFrom(PropertyLoader.provider.getProperty("MailFrom", String.class));
+		List<String> SendToList = PropertyLoader.provider.getProperty("SendToList", new GenericType<List<String>>() {
+		});
 		for (String emailid : SendToList)
 			email.addTo(emailid);
-		String[] SendCCList = prop.getProperty("SendCCList").split(",");
+		List<String> SendCCList = PropertyLoader.provider.getProperty("SendCCList", new GenericType<List<String>>() {
+		});
 		for (String emailid : SendCCList)
 			email.addCc(emailid);
 
 		// set the html message
-		email.attach(new File(
-				"./target/cucumber-html-reports/feature-overview.html")
+		email.attach(new File("./target/cucumber-html-reports/cucumber-html-reports/overview-features.html")
 				.getAbsoluteFile());
 
 		// set the alternative message
@@ -42,6 +42,10 @@ public class ReportMailer {
 
 		// send the email
 		email.send();
+	}
+
+	public static void main(String[] args) throws EmailException, IOException {
+		sendemail();
 	}
 
 }
