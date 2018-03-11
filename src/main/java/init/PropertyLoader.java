@@ -12,10 +12,12 @@ import java.util.concurrent.TimeUnit;
 import org.cfg4j.provider.ConfigurationProvider;
 import org.cfg4j.provider.ConfigurationProviderBuilder;
 import org.cfg4j.source.ConfigurationSource;
+import org.cfg4j.source.compose.MergeConfigurationSource;
 import org.cfg4j.source.context.filesprovider.ConfigFilesProvider;
 import org.cfg4j.source.files.FilesConfigurationSource;
 import org.cfg4j.source.reload.ReloadStrategy;
 import org.cfg4j.source.reload.strategy.PeriodicalReloadStrategy;
+import org.cfg4j.source.system.SystemPropertiesConfigurationSource;
 
 public class PropertyLoader {
 	public static ConfigurationProvider provider = null;
@@ -33,7 +35,9 @@ public class PropertyLoader {
 			}
 		});
 		ConfigFilesProvider configFilesProvider = () -> path;
-		ConfigurationSource source = new FilesConfigurationSource(configFilesProvider);
+		ConfigurationSource source1 = new FilesConfigurationSource(configFilesProvider);
+		ConfigurationSource source2 = new SystemPropertiesConfigurationSource();
+		ConfigurationSource source = new MergeConfigurationSource(source1,source2);
 		// ReloadStrategy reloadStrategy = new
 		// PeriodicalReloadStrategy(10,TimeUnit.SECONDS);
 		provider = new ConfigurationProviderBuilder().withConfigurationSource(source).build();

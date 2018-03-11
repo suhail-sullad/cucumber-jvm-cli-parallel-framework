@@ -51,7 +51,6 @@ public class RunCukesTest {
 				break;
 			}
 		}
-
 	}
 
 	private static void run_api_features_parallel() throws InterruptedException, IOException {
@@ -74,6 +73,7 @@ public class RunCukesTest {
 			KarateJunitAndJsonReporter reporter = new KarateJunitAndJsonReporter(file.getPath(),
 					"./target/cucumber-reports/api/" + file.getName() + ".json");
 			KarateRuntime runtime = kf.getRuntime(reporter);
+
 			kf.getFeature().run(reporter, reporter, runtime);
 			reporter.done();
 		}
@@ -145,10 +145,11 @@ public class RunCukesTest {
 	}
 
 	public static void run_ui_features_in_parallel() throws IOException, InterruptedException {
-		
-		List<String> features =getfilelist(PropertyLoader.provider.getProperty("featurefilepath", String.class), "feature");
+
+		List<String> features = getfilelist(PropertyLoader.provider.getProperty("featurefilepath", String.class),
+				"feature");
 		for (String feature : features) {
-			System.out.println("Current Feature: "+ feature);
+			System.out.println("Current Feature: " + feature);
 			List<String> arguments = new ArrayList<String>();
 			arguments.add(feature);
 			arguments.add("--format");
@@ -166,7 +167,7 @@ public class RunCukesTest {
 					arguments.add(packages);
 				}
 			}
-			System.out.println("Arguments sent:"+ arguments);
+			System.out.println("Arguments sent:" + arguments);
 			final String[] argv = arguments.toArray(new String[0]);
 			executeUITests(argv);
 
@@ -222,7 +223,7 @@ public class RunCukesTest {
 
 		ExecutorService es = Executors.newSingleThreadExecutor();
 		Thread.sleep(2000);
-		System.out.println("Running API Thread:"+apiinvocationcount);
+		System.out.println("Running API Thread:" + apiinvocationcount);
 		es.execute(new Runnable() {
 
 			@Override
