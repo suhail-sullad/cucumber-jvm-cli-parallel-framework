@@ -73,7 +73,7 @@ public class RunCukesTest {
 
 		JsonFormatter jf = new JsonFormatter();
 		for (String feature : features) {
-			executeApiTestsOnTags(feature);
+			executeApiTests(feature, true);
 		}
 
 	}
@@ -81,9 +81,9 @@ public class RunCukesTest {
 	private static void run_api_features_parallel() throws InterruptedException, IOException {
 		List<String> features = getfilelist(PropertyLoader.provider.getProperty("apifeaturefilepath", String.class),
 				"feature");
-		for (String string : features) {
+		for (String feature : features) {
 
-			executeApiITests(string);
+			executeApiTests(feature, false);
 		}
 	}
 
@@ -245,7 +245,7 @@ public class RunCukesTest {
 
 	}
 
-	public static void executeApiITests(final String featureFile) throws InterruptedException {
+	public static void executeApiTests(final String featureFile, final Boolean isTags) throws InterruptedException {
 
 		while (apiinvocationcount > maxinvocationcount - 1)
 			Thread.sleep(1000);
@@ -261,44 +261,10 @@ public class RunCukesTest {
 				apiinvocationcount++;
 				try {
 					File file = new File(featureFile);
+
 					KarateFeature kf = new KarateFeature(file);
-					KarateJunitAndJsonReporter reporter = new KarateJunitAndJsonReporter(file.getPath(),
-							"./target/cucumber-reports/api/" + file.getName() + ".json");
-					KarateRuntime runtime = kf.getRuntime(reporter);
-					kf.getFeature().run(reporter, reporter, runtime);
-					reporter.done();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} finally {
-					apiinvocationcount--;
-				}
-			}
-
-		});
-
-		es.shutdown();
-
-	}
-
-	public static void executeApiTestsOnTags(final String featureFile) throws InterruptedException {
-
-		while (apiinvocationcount > maxinvocationcount - 1)
-			Thread.sleep(1000);
-
-		ExecutorService es = Executors.newSingleThreadExecutor();
-		Thread.sleep(2000);
-		System.out.println("Running API Thread:" + apiinvocationcount);
-		es.execute(new Runnable() {
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				apiinvocationcount++;
-				try {
-					File file = new File(featureFile);
-					KarateFeature kf = new KarateFeature(file);
-					filterOnTags(kf.getFeature());
+					if (isTags)
+						filterOnTags(kf.getFeature());
 					if (!kf.getFeature().getFeatureElements().isEmpty()) {
 						KarateJunitAndJsonReporter reporter = new KarateJunitAndJsonReporter(file.getPath(),
 								"./target/cucumber-reports/api/" + file.getName() + ".json");
