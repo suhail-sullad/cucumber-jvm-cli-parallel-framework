@@ -272,7 +272,8 @@ public class RunCukesTest {
 						kf.getFeature().run(reporter, reporter, runtime);
 						reporter.done();
 					}
-				} catch (Exception e) {
+					
+					  } catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} finally {
