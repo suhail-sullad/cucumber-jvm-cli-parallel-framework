@@ -1,7 +1,8 @@
+@runthisall
 Feature: Sample Karate API Automation 
 Background: 
 	* url 'http://services.groupkt.com'
-@runthis 
+
 Scenario: States of country returned on GET 
 	Given   path '/state/get/IND/all' 
 	When method get 

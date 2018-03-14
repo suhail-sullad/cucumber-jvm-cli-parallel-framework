@@ -290,11 +290,13 @@ public class RunCukesTest {
 		final List<CucumberTagStatement> featureElements = feature.getFeatureElements();
 		List<String> tags = PropertyLoader.provider.getProperty("tagstorun", new GenericType<List<String>>() {
 		});
+
 		System.err.println("Filtering tags: " + tags.toString());
 		for (Iterator<CucumberTagStatement> iterator = featureElements.iterator(); iterator.hasNext();) {
 			CucumberTagStatement cucumberTagStatement = iterator.next();
 			final boolean isFiltered = cucumberTagStatement.getGherkinModel().getTags().stream()
-					.anyMatch(t -> tags.contains(t.getName()));
+					.anyMatch(t -> tags.contains(t.getName()))
+					|| feature.getGherkinFeature().getTags().stream().anyMatch(t -> tags.contains(t.getName()));
 			if (!isFiltered) {
 				System.err.println("skipping feature element " + cucumberTagStatement.getVisualName() + " of feature "
 						+ feature.getPath() + " At line: " + cucumberTagStatement.getGherkinModel().getLine());
