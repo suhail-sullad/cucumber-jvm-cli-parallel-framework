@@ -265,7 +265,7 @@ public class RunCukesTest {
 					KarateFeature kf = new KarateFeature(file);
 					if (isTags)
 						filterOnTags(kf.getFeature());
-					if (!kf.getFeature().getFeatureElements().isEmpty() && isTags) {
+					if (!kf.getFeature().getFeatureElements().isEmpty()) {
 						KarateJunitAndJsonReporter reporter = new KarateJunitAndJsonReporter(file.getPath(),
 								"./target/cucumber-reports/api/" + file.getName() + ".json");
 						KarateRuntime runtime = kf.getRuntime(reporter);
@@ -273,14 +273,7 @@ public class RunCukesTest {
 						reporter.done();
 					}
 					
-					  if(!isTags) {
-						KarateJunitAndJsonReporter reporter = new KarateJunitAndJsonReporter(file.getPath(),
-								"./target/cucumber-reports/api/" + file.getName() + ".json");
-						KarateRuntime runtime = kf.getRuntime(reporter);
-						kf.getFeature().run(reporter, reporter, runtime);
-						reporter.done();
-					
-				} catch (Exception e) {
+					  } catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} finally {
