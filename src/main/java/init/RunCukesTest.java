@@ -12,6 +12,8 @@ import java.util.ServiceLoader;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.cfg4j.provider.GenericType;
@@ -41,7 +44,7 @@ public class RunCukesTest {
 	 * apiinvocationcount = 0; private static int maxinvocationcount = 0;
 	 */
 	private static ExecutorService featureRunner = null;
-	private static List<CompletableFuture<Byte>> featureStatus = new ArrayList<>();
+	private static List<CompletableFuture<Supplier<Byte>>> featureStatus = new ArrayList<>();
 	private static Logger log = Logger.getLogger(RunCukesTest.class);
 
 	public static void main(String[] args) throws Exception {
@@ -57,7 +60,13 @@ public class RunCukesTest {
 		for (ExecutionModes em : parallelModes) {
 			switch (em) {
 			case API_TAG_PARALLEL:
-				run_api_tags_parallel();
+				run_api_parallel(true);
+				break;
+			case API_FEATURE_SEQUENTIAL:
+				run_api_features_sequential();
+				break;
+			case API_FEATURE_PARALLEL:
+				run_api_parallel(false);
 				break;
 			case UI_TAG_PARALLEL:
 				run_ui_tags_in_parallel();
@@ -65,37 +74,22 @@ public class RunCukesTest {
 			case UI_FEATURE_PARALLEL:
 				run_ui_features_in_parallel();
 				break;
-			case API_FEATURE_SEQUENTIAL:
-				run_api_features_sequential();
-				break;
 			case UI_FEATURE_SEQUENTIAL:
-				run_api_features_parallel();
+				run_ui_sequentially();
 				break;
 
 			}
 		}
-		System.err.println("number of futures:" + featureStatus.size());
-		for (CompletableFuture<Byte> cf : featureStatus) {
-			CompletableFuture.allOf(cf);
-		}
+
+		CompletableFuture.allOf(featureStatus.toArray(new CompletableFuture[featureStatus.size()]));
 		featureRunner.shutdown();
 	}
 
-	private static void run_api_tags_parallel() throws IOException, InterruptedException, TagFilterException {
+	private static void run_api_parallel(Boolean isTags) throws IOException, InterruptedException, TagFilterException {
 		List<String> features = getfilelist(PropertyLoader.provider.getProperty("apifeaturefilepath", String.class),
 				"feature");
 		for (String feature : features) {
-			executeApiTests(feature, true);
-		}
-
-	}
-
-	private static void run_api_features_parallel() throws InterruptedException, IOException {
-		List<String> features = getfilelist(PropertyLoader.provider.getProperty("apifeaturefilepath", String.class),
-				"feature");
-		for (String feature : features) {
-
-			executeApiTests(feature, false);
+			executeApiTests(feature, isTags);
 		}
 	}
 
@@ -262,8 +256,10 @@ public class RunCukesTest {
 
 	public static void executeTests(final String[] args, final Boolean isTags,
 			BiFunction<String[], Boolean, Supplier<Byte>> executionFunction) {
-		
-		featureStatus.add(CompletableFuture.supplyAsync(executionFunction.apply(args, isTags), featureRunner));
+		CompletableFuture<Supplier<Byte>> future = CompletableFuture
+				.supplyAsync(() -> executionFunction.apply(args, isTags), featureRunner);
+		featureStatus.add(future);
+
 	}
 
 	private static void filterOnTags(CucumberFeature feature) {
