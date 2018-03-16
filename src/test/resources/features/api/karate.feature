@@ -1,4 +1,4 @@
-@runthisall
+@runthis
 Feature: Sample Karate API Automation 
 Background: 
 	* url 'http://services.groupkt.com'

@@ -6,7 +6,7 @@ Feature: Verify that products are properly returned by the API
     Given   path 'neillfontes'
      When method get
      Then status 500
-     
+   @runthis  
   Scenario: Valid Products are returned on GET
     Given   path 'neillfontes'
      When method get

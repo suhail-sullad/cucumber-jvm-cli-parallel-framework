@@ -9,13 +9,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.cfg4j.provider.GenericType;
 import org.joda.time.DateTime;
 
@@ -31,47 +36,54 @@ import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberTagStatement;
 
 public class RunCukesTest {
-	private static int uiinvocationcount = 0;
-	private static int apiinvocationcount = 0;
-	private static int maxinvocationcount = 0;
+	/*
+	 * private static int uiinvocationcount = 0; private static int
+	 * apiinvocationcount = 0; private static int maxinvocationcount = 0;
+	 */
+	private static ExecutorService featureRunner = null;
+	private static List<CompletableFuture<Byte>> featureStatus = new ArrayList<>();
+	private static Logger log = Logger.getLogger(RunCukesTest.class);
 
 	public static void main(String[] args) throws Exception {
-
+		log.info("Initializing properties...");
 		PropertyLoader.init();
-		maxinvocationcount = PropertyLoader.provider.getProperty("invocationcount", Integer.class);
-		List<String> parallelMode = PropertyLoader.provider.getProperty("parallel", new GenericType<List<String>>() {
-		});
-		for (String mode : parallelMode) {
-			switch (mode) {
-			case "uitagsparallel":
-				run_ui_tags_in_parallel();
-				break;
-			case "uifeaturesparallel":
-				run_ui_features_in_parallel();
-				break;
-			case "apifeaturessequential":
-				run_api_features_sequential();
-				break;
-			case "apifeaturesparallel":
-				run_api_features_parallel();
-				break;
-			case "apitagsparallel":
+		List<ExecutionModes> parallelModes = PropertyLoader.provider.getProperty("parallel",
+				new GenericType<List<ExecutionModes>>() {
+				});
+		log.info("Initializing ThreadPool...");
+		featureRunner = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+
+		log.info("Selecting ExecutionModes...");
+		for (ExecutionModes em : parallelModes) {
+			switch (em) {
+			case API_TAG_PARALLEL:
 				run_api_tags_parallel();
 				break;
-			case "uifeaturessequential":
-				run_ui_sequentially();
+			case UI_TAG_PARALLEL:
+				run_ui_tags_in_parallel();
 				break;
+			case UI_FEATURE_PARALLEL:
+				run_ui_features_in_parallel();
+				break;
+			case API_FEATURE_SEQUENTIAL:
+				run_api_features_sequential();
+				break;
+			case UI_FEATURE_SEQUENTIAL:
+				run_api_features_parallel();
+				break;
+
 			}
 		}
+		System.err.println("number of futures:" + featureStatus.size());
+		for (CompletableFuture<Byte> cf : featureStatus) {
+			CompletableFuture.allOf(cf);
+		}
+		featureRunner.shutdown();
 	}
 
 	private static void run_api_tags_parallel() throws IOException, InterruptedException, TagFilterException {
-		List<String> tags = PropertyLoader.provider.getProperty("tagstorun", new GenericType<List<String>>() {
-		});
 		List<String> features = getfilelist(PropertyLoader.provider.getProperty("apifeaturefilepath", String.class),
 				"feature");
-
-		JsonFormatter jf = new JsonFormatter();
 		for (String feature : features) {
 			executeApiTests(feature, true);
 		}
@@ -199,95 +211,62 @@ public class RunCukesTest {
 			System.out.println("Arguments sent:" + arguments);
 			final String[] argv = arguments.toArray(new String[0]);
 			executeUITests(argv);
-
 		}
-
-	}
-
-	public static List<String> getfilelist(String pathname, String type) throws IOException {
-		Collection<File> files = FileUtils.listFilesAndDirs(new File(pathname).getAbsoluteFile(),
-				TrueFileFilter.INSTANCE, DirectoryFileFilter.DIRECTORY);
-		List<String> filenames = new ArrayList<String>();
-		for (File file : files) {
-			if (file.getName().contains(type))
-				filenames.add(file.getPath().replace("\\", "/"));
-		}
-		return filenames;
 	}
 
 	public static void executeUITests(final String[] argv) throws InterruptedException {
-
-		while (uiinvocationcount > maxinvocationcount - 1)
-			Thread.sleep(1000);
-
-		ExecutorService es = Executors.newSingleThreadExecutor();
-		Thread.sleep(2000);
-		System.out.println(uiinvocationcount);
-		es.execute(new Runnable() {
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				uiinvocationcount++;
-				try {
-					cucumber.api.cli.Main.run(argv, RunCukesTest.class.getClassLoader());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} finally {
-					uiinvocationcount--;
-				}
+		// TODO need to find an alternate runner which has better error handline
+		BiFunction<String[], Boolean, Supplier<Byte>> executeUITests = (args, tagOnly) -> {
+			try {
+				cucumber.api.cli.Main.run(args, RunCukesTest.class.getClassLoader());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				log.error("Exception occured: " + e.getMessage());
+				return () -> 0x1;
 			}
+			return () -> 0x0;
+		};
 
-		});
-
-		es.shutdown();
-
+		executeTests(argv, false, executeUITests);
 	}
 
-	public static void executeApiTests(final String featureFile, final Boolean isTags) throws InterruptedException {
+	public static void executeApiTests(final String featureFile, final Boolean isTags)
+			throws InterruptedException, IOException {
 
-		while (apiinvocationcount > maxinvocationcount - 1)
-			Thread.sleep(1000);
+		log.info("Executing API tests...");
+		BiFunction<String[], Boolean, Supplier<Byte>> executeAPITests = (args, tagOnly) -> {
+			File file = new File(args[0]);
 
-		ExecutorService es = Executors.newSingleThreadExecutor();
-		Thread.sleep(2000);
-		System.out.println("Running API Thread:" + apiinvocationcount);
-		es.execute(new Runnable() {
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				apiinvocationcount++;
+			KarateFeature kf = new KarateFeature(file);
+			if (tagOnly)
+				filterOnTags(kf.getFeature());
+			if (!kf.getFeature().getFeatureElements().isEmpty()) {
+				KarateJunitAndJsonReporter reporter = null;
 				try {
-					File file = new File(featureFile);
-
-					KarateFeature kf = new KarateFeature(file);
-					if (isTags)
-						filterOnTags(kf.getFeature());
-					if (!kf.getFeature().getFeatureElements().isEmpty()) {
-						KarateJunitAndJsonReporter reporter = new KarateJunitAndJsonReporter(file.getPath(),
-								"./target/cucumber-reports/api/" + file.getName() + ".json");
-						KarateRuntime runtime = kf.getRuntime(reporter);
-						kf.getFeature().run(reporter, reporter, runtime);
-						reporter.done();
-					}
-					
-					  } catch (Exception e) {
+					reporter = new KarateJunitAndJsonReporter(file.getPath(),
+							"./target/cucumber-reports/api/" + file.getName() + ".json");
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} finally {
-					apiinvocationcount--;
+					log.error("Exception occured: " + e.getMessage());
+					// e.printStackTrace();
 				}
+				KarateRuntime runtime = kf.getRuntime(reporter);
+				kf.getFeature().run(reporter, reporter, runtime);
+				reporter.done();
+				return () -> runtime.exitStatus();
 			}
-
-		});
-
-		es.shutdown();
-
+			return () -> 0x0;
+		};
+		executeTests(new String[] { featureFile }, isTags, executeAPITests);
 	}
 
-	private static void filterOnTags(CucumberFeature feature) throws TagFilterException {
+	public static void executeTests(final String[] args, final Boolean isTags,
+			BiFunction<String[], Boolean, Supplier<Byte>> executionFunction) {
+		
+		featureStatus.add(CompletableFuture.supplyAsync(executionFunction.apply(args, isTags), featureRunner));
+	}
+
+	private static void filterOnTags(CucumberFeature feature) {
 		final List<CucumberTagStatement> featureElements = feature.getFeatureElements();
 		List<String> tags = PropertyLoader.provider.getProperty("tagstorun", new GenericType<List<String>>() {
 		});
@@ -304,6 +283,14 @@ public class RunCukesTest {
 				iterator.remove();
 			}
 		}
+	}
+
+	public static List<String> getfilelist(String pathname, String type) throws IOException {
+		return FileUtils
+				.listFilesAndDirs(new File(pathname).getAbsoluteFile(), TrueFileFilter.INSTANCE,
+						DirectoryFileFilter.DIRECTORY)
+				.stream().filter(file -> file.getName().endsWith(type)).map(f -> f.getPath().replace("\\", "/"))
+				.collect(Collectors.toList());
 	}
 
 }
